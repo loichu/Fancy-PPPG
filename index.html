@@ -65,11 +65,9 @@
         const win = document.getElementById('win');
         const tries = document.getElementById('tries');
 
-        // Animated messages
-        let ppWrapper = document.querySelector('#pp');
-        ppWrapper.innerHTML = ppWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
-        let pgWrapper = document.querySelector('#pg');
-        pgWrapper.innerHTML = pgWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+        // Split animated messages letters in spans
+        pp.innerHTML = pp.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+        pg.innerHTML = pg.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
 
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
         // Picks a random number between 0 and 100 (101 is not included)

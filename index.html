@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plus Petit Plus Grand</title>
+    <style>
+        .message {
+            font-weight: 900;
+            font-size: 3.5em;
+        }
+
+        .message .letter {
+            display: inline-block;
+            line-height: 1em;
+        }
+
+        #win {
+            font-weight: 800;
+            font-size: 3.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.5em;
+        }
+
+        #win .word {
+            display: inline-block;
+            line-height: 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Plus Petit Plus Grand</h1>
+    <p>
+        Vous devez essayer de trouver un nombre compris entre 0 et 100.
+    </p>
+    <p>
+        Vous avez déjà fait <span id="tries">0</span> essais.
+    </p>
+    <form id="form">
+        <p id="error" style="color: red;" hidden>
+            Vous devez entrer un nombre entre 0 et 100
+        </p>
+
+        <label for="input">Nombre</label>
+        <input type="number" id="input" min="0" max="100" required>
+      
+        <button type="submit">Essayer !</button>
+    </form>
+    <p class="message" id="pp" hidden><b>Plus petit !</b></p>
+    <p class="message" id="pg" hidden><b>Plus grand !</b></p>
+    <p id="win" hidden>
+        <span class="word">Vous</span>
+        <span class="word">avez</span>
+        <span class="word">gagné !</span>
+    </p>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+    <script>
+        // Get HTML elements
+        const form = document.getElementById('form');
+        const error = document.getElementById('error');
+        const input = document.getElementById('input');
+        const pp = document.getElementById('pp');
+        const pg = document.getElementById('pg');
+        const win = document.getElementById('win');
+        const tries = document.getElementById('tries');
+
+        // Animated messages
+        let ppWrapper = document.querySelector('#pp');
+        ppWrapper.innerHTML = ppWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+        let pgWrapper = document.querySelector('#pg');
+        pgWrapper.innerHTML = pgWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+        // Picks a random number between 0 and 100 (101 is not included)
+        const number = Math.floor(Math.random() * Math.floor(101))
+
+        // Attach events
+        input.oninvalid = invalid;
+        form.onsubmit = submit;
+
+        // On invalid input
+        function invalid(e) {
+            error.removeAttribute('hidden'); // Show error
+        }
+
+        // On form submit
+        function submit(e) {
+            // Reset messages
+            error.setAttribute('hidden', '');
+            pp.setAttribute('hidden', '');
+            pg.setAttribute('hidden', '');
+            win.setAttribute('hidden', '');
+
+            // Check win, show appropriate message
+            const triedNumber = input.value;
+            if (triedNumber == number) {
+                console.log('Vous avez gagné');
+                form.setAttribute('hidden', '');
+                win.removeAttribute('hidden');
+                anime.timeline({loop: true})
+                .add({
+                    targets: '#win .word',
+                    scale: [14,1],
+                    opacity: [0,1],
+                    easing: "easeOutCirc",
+                    duration: 800,
+                    delay: (el, i) => 800 * i
+                }).add({
+                    targets: '#win',
+                    opacity: 0,
+                    duration: 1000,
+                    easing: "easeOutExpo",
+                    delay: 1000
+                });
+            } else if (triedNumber < number) {
+                pg.removeAttribute('hidden');
+                anime.timeline()
+                .add({
+                    targets: '#pg .letter',
+                    scale: [4,1],
+                    opacity: [0,1],
+                    translateZ: 0,
+                    easing: "easeOutExpo",
+                    duration: 950,
+                    delay: (el, i) => 70*i
+                })
+            } else if (triedNumber > number) {
+                pp.removeAttribute('hidden');
+                anime.timeline()
+                .add({
+                    targets: '#pp .letter',
+                    scale: [4,1],
+                    opacity: [0,1],
+                    translateZ: 0,
+                    easing: "easeOutExpo",
+                    duration: 950,
+                    delay: (el, i) => 70*i
+                })
+            }
+
+            // Increase tries counter
+            const numberOfTries = parseInt(tries.textContent) + 1;
+            tries.textContent = numberOfTries;
+
+            // Prevent page reload
+            e.preventDefault();
+        }
+    </script>
+</body>
+</html>
